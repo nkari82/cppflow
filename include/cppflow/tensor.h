@@ -11,7 +11,6 @@
 #include <string>
 #include <tensorflow/c/tf_tensor.h>
 #include <tensorflow/c/eager/c_api.h>
-#include <bits/shared_ptr.h>
 
 #include "context.h"
 #include "datatype.h"
@@ -107,7 +106,7 @@ namespace cppflow {
 namespace cppflow {
 
     tensor::tensor(enum TF_DataType type, const void *data, size_t len, const std::vector<int64_t> &shape) {
-        this->tf_tensor = {TF_AllocateTensor(type, shape.data(), shape.size(), len), TF_DeleteTensor};
+        this->tf_tensor = {TF_AllocateTensor(type, shape.data(), (int)shape.size(), (int)len), TF_DeleteTensor};
         memcpy(TF_TensorData(this->tf_tensor.get()), data, TF_TensorByteSize(this->tf_tensor.get()));
         this->tfe_handle = {TFE_NewTensorHandle(this->tf_tensor.get(), context::get_status()), TFE_DeleteTensorHandle};
         status_check(context::get_status());
