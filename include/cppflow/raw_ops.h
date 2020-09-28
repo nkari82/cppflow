@@ -58,14 +58,14 @@ tensor accumulate_n_v2(const std::vector<tensor>&inputs, const std::vector<int64
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve((int)inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, inputs_handles.data(), (int)(int)inputs.size(), context::get_status());
+    TFE_OpAddInputList(op, inputs_handles.data(), (int)inputs.size(), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrInt(op, "N", (int)inputs.size());
     
-    TFE_OpSetAttrShape(op, "shape", shape.data(), (int)(int)shape.size(), context::get_status());
+    TFE_OpSetAttrShape(op, "shape", shape.data(), (int)shape.size(), context::get_status());
     status_check(context::get_status());
     
 
@@ -256,7 +256,7 @@ tensor add_n(const std::vector<tensor>&inputs) {
     
     std::vector<TFE_TensorHandle*> inputs_handles; inputs_handles.reserve((int)inputs.size());
     std::transform(inputs.begin(), inputs.end(), std::back_inserter(inputs_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, inputs_handles.data(), (int)(int)inputs.size(), context::get_status());
+    TFE_OpAddInputList(op, inputs_handles.data(), (int)inputs.size(), context::get_status());
     status_check(context::get_status());
     
 
@@ -556,7 +556,7 @@ tensor anonymous_iterator(const std::vector<datatype>& output_types, const std::
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)(int)output_types.size());
+    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)output_types.size());
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve((int)output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve((int)output_shapes.size());
@@ -1573,7 +1573,7 @@ tensor assert_cardinality_dataset(const tensor& input_dataset, const tensor& car
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)(int)output_types.size());
+    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)output_types.size());
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve((int)output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve((int)output_shapes.size());
@@ -1610,7 +1610,7 @@ tensor assert_next_dataset(const tensor& input_dataset, const tensor& transforma
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)(int)output_types.size());
+    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)output_types.size());
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve((int)output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve((int)output_shapes.size());
@@ -1908,7 +1908,7 @@ tensor auto_shard_dataset(const tensor& input_dataset, const tensor& num_workers
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)(int)output_types.size());
+    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)output_types.size());
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve((int)output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve((int)output_shapes.size());
@@ -1943,7 +1943,7 @@ tensor avg_pool(const tensor& value, const std::vector<int64_t>& ksize, const st
 
     // Attributes
     TFE_OpSetAttrIntList(op, "ksize", ksize.data(), (int)ksize.size());
-    TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)(int)strides.size());
+    TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)strides.size());
     TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -1971,7 +1971,7 @@ tensor avg_pool3_d(const tensor& input, const std::vector<int64_t>& ksize, const
 
     // Attributes
     TFE_OpSetAttrIntList(op, "ksize", ksize.data(), (int)ksize.size());
-    TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)(int)strides.size());
+    TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)strides.size());
     TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -2003,7 +2003,7 @@ tensor avg_pool3_d_grad(const tensor& orig_input_shape, const tensor& grad, cons
 
     // Attributes
     TFE_OpSetAttrIntList(op, "ksize", ksize.data(), (int)ksize.size());
-    TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)(int)strides.size());
+    TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)strides.size());
     TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -2035,7 +2035,7 @@ tensor avg_pool_grad(const tensor& orig_input_shape, const tensor& grad, const s
 
     // Attributes
     TFE_OpSetAttrIntList(op, "ksize", ksize.data(), (int)ksize.size());
-    TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)(int)strides.size());
+    TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)strides.size());
     TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), padding.size());
     TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), data_format.size());
 
@@ -2059,13 +2059,13 @@ tensor barrier(const std::vector<datatype>& component_types, const std::vector< 
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op, "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), (int)(int)component_types.size());
+    TFE_OpSetAttrTypeList(op, "component_types", reinterpret_cast<const enum TF_DataType *>(component_types.data()), (int)component_types.size());
     
     std::vector<const int64_t*> shapes_values; shapes_values.reserve((int)shapes.size());
     std::vector<int> shapes_ndims; shapes_ndims.reserve((int)shapes.size());
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_values), [](const auto& v) { return v.data();});
     std::transform(shapes.begin(), shapes.end(), std::back_inserter(shapes_ndims), [](const auto& v) { return (int)v.size();});
-    TFE_OpSetAttrShapeList(op, "shapes", shapes_values.data(), shapes_ndims.data(), (int)(int)shapes.size(), context::get_status());
+    TFE_OpSetAttrShapeList(op, "shapes", shapes_values.data(), shapes_ndims.data(), (int)shapes.size(), context::get_status());
     status_check(context::get_status());
     
     TFE_OpSetAttrInt(op, "capacity", capacity);
@@ -2203,7 +2203,7 @@ tensor batch_dataset(const tensor& input_dataset, const tensor& batch_size, cons
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)(int)output_types.size());
+    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)output_types.size());
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve((int)output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve((int)output_shapes.size());
@@ -2244,7 +2244,7 @@ tensor batch_dataset_v2(const tensor& input_dataset, const tensor& batch_size, c
     
 
     // Attributes
-    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)(int)output_types.size());
+    TFE_OpSetAttrTypeList(op, "output_types", reinterpret_cast<const enum TF_DataType *>(output_types.data()), (int)output_types.size());
     
     std::vector<const int64_t*> output_shapes_values; output_shapes_values.reserve((int)output_shapes.size());
     std::vector<int> output_shapes_ndims; output_shapes_ndims.reserve((int)output_shapes.size());
@@ -4176,11 +4176,11 @@ tensor collective_reduce(const tensor& input, int64_t group_size, int64_t group_
     TFE_OpSetAttrInt(op, "group_size", group_size);
     TFE_OpSetAttrInt(op, "group_key", group_key);
     TFE_OpSetAttrInt(op, "instance_key", instance_key);
-    TFE_OpSetAttrString(op, "merge_op", (void*) merge_op.c_str(), merge_op.size());
-    TFE_OpSetAttrString(op, "final_op", (void*) final_op.c_str(), final_op.size());
-    TFE_OpSetAttrIntList(op, "subdiv_offsets", subdiv_offsets.data(), subdiv_offsets.size());
+    TFE_OpSetAttrString(op, "merge_op", (void*) merge_op.c_str(), (int)merge_op.size());
+    TFE_OpSetAttrString(op, "final_op", (void*) final_op.c_str(), (int)final_op.size());
+    TFE_OpSetAttrIntList(op, "subdiv_offsets", subdiv_offsets.data(), (int)subdiv_offsets.size());
     TFE_OpSetAttrIntList(op, "wait_for", wait_for.data(), wait_for.size());
-    TFE_OpSetAttrString(op, "communication_hint", (void*) communication_hint.c_str(), communication_hint.size());
+    TFE_OpSetAttrString(op, "communication_hint", (void*) communication_hint.c_str(), (int)communication_hint.size());
     TFE_OpSetAttrFloat(op, "timeout_seconds", timeout_seconds);
 
     // Execute Op
@@ -4346,9 +4346,9 @@ tensor concat_v2(const std::vector<tensor>&values, const tensor& axis, datatype 
 
     // Required input arguments
     
-    std::vector<TFE_TensorHandle*> values_handles; values_handles.reserve(values.size());
+    std::vector<TFE_TensorHandle*> values_handles; values_handles.reserve((int)values.size());
     std::transform(values.begin(), values.end(), std::back_inserter(values_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, values_handles.data(), values.size(), context::get_status());
+    TFE_OpAddInputList(op, values_handles.data(), (int)values.size(), context::get_status());
     status_check(context::get_status());
     
     
@@ -4561,10 +4561,10 @@ tensor conv2_d(const tensor& input, const tensor& filter, const std::vector<int6
     // Attributes
     TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)strides.size());
     TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op, "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op, "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrIntList(op, "explicit_paddings", explicit_paddings.data(), (int)explicit_paddings.size());
+    TFE_OpSetAttrIntList(op, "dilations", dilations.data(), (int)dilations.size());
     TFE_OpSetAttrBool(op, "use_cudnn_on_gpu", (unsigned char)use_cudnn_on_gpu);
-    TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), data_format.size());
+    TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), (int)data_format.size());
 
     // Execute Op
     int num_outputs_op = 1;
@@ -4598,11 +4598,11 @@ tensor conv2_d_backprop_filter(const tensor& input, const tensor& filter_sizes, 
 
     // Attributes
     TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)strides.size());
-    TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op, "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op, "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), (int)padding.size());
+    TFE_OpSetAttrIntList(op, "explicit_paddings", explicit_paddings.data(), (int)explicit_paddings.size());
+    TFE_OpSetAttrIntList(op, "dilations", dilations.data(), (int)dilations.size());
     TFE_OpSetAttrBool(op, "use_cudnn_on_gpu", (unsigned char)use_cudnn_on_gpu);
-    TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), data_format.size());
+    TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), (int)data_format.size());
 
     // Execute Op
     int num_outputs_op = 1;
@@ -4636,11 +4636,11 @@ tensor conv2_d_backprop_input(const tensor& input_sizes, const tensor& filter, c
 
     // Attributes
     TFE_OpSetAttrIntList(op, "strides", strides.data(), (int)strides.size());
-    TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), padding.size());
-    TFE_OpSetAttrIntList(op, "explicit_paddings", explicit_paddings.data(), explicit_paddings.size());
-    TFE_OpSetAttrIntList(op, "dilations", dilations.data(), dilations.size());
+    TFE_OpSetAttrString(op, "padding", (void*) padding.c_str(), (int)padding.size());
+    TFE_OpSetAttrIntList(op, "explicit_paddings", explicit_paddings.data(), (int)explicit_paddings.size());
+    TFE_OpSetAttrIntList(op, "dilations", dilations.data(), (int)dilations.size());
     TFE_OpSetAttrBool(op, "use_cudnn_on_gpu", (unsigned char)use_cudnn_on_gpu);
-    TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), data_format.size());
+    TFE_OpSetAttrString(op, "data_format", (void*) data_format.c_str(), (int)data_format.size());
 
     // Execute Op
     int num_outputs_op = 1;
@@ -6820,9 +6820,9 @@ tensor eager_py_func(const std::vector<tensor>&input, const std::string& token, 
 
     // Required input arguments
     
-    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
+    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve((int)input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op, input_handles.data(), (int)input.size(), context::get_status());
     status_check(context::get_status());
     
 
@@ -10160,9 +10160,9 @@ tensor identity_n(const std::vector<tensor>&input) {
 
     // Required input arguments
     
-    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
+    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve((int)input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op, input_handles.data(), (int)input.size(), context::get_status());
     status_check(context::get_status());
     
 
@@ -14026,15 +14026,15 @@ tensor nccl_reduce(const std::vector<tensor>&input, const std::string& reduction
 
     // Required input arguments
     
-    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
+    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve((int)input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op, input_handles.data(), (int)input.size(), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrString(op, "reduction", (void*) reduction.c_str(), reduction.size());
-    TFE_OpSetAttrInt(op, "num_devices", input.size());
+    TFE_OpSetAttrInt(op, "num_devices", (int)input.size());
 
     // Execute Op
     int num_outputs_op = 1;
@@ -15811,9 +15811,9 @@ tensor py_func(const std::vector<tensor>&input, const std::string& token, const 
 
     // Required input arguments
     
-    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
+    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve((int)input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op, input_handles.data(), (int)input.size(), context::get_status());
     status_check(context::get_status());
     
 
@@ -15840,9 +15840,9 @@ tensor py_func_stateless(const std::vector<tensor>&input, const std::string& tok
 
     // Required input arguments
     
-    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
+    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve((int)input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, input_handles.data(), input.size(), context::get_status());
+    TFE_OpAddInputList(op, input_handles.data(), (int)input.size(), context::get_status());
     status_check(context::get_status());
     
 
@@ -16438,16 +16438,16 @@ tensor ragged_tensor_to_tensor(const tensor& shape, const tensor& values, const 
     status_check(context::get_status());
     
     
-    std::vector<TFE_TensorHandle*> row_partition_tensors_handles; row_partition_tensors_handles.reserve(row_partition_tensors.size());
+    std::vector<TFE_TensorHandle*> row_partition_tensors_handles; row_partition_tensors_handles.reserve((int)row_partition_tensors.size());
     std::transform(row_partition_tensors.begin(), row_partition_tensors.end(), std::back_inserter(row_partition_tensors_handles), [](const auto& t) { return t.tfe_handle.get();});
-    TFE_OpAddInputList(op, row_partition_tensors_handles.data(), row_partition_tensors.size(), context::get_status());
+    TFE_OpAddInputList(op, row_partition_tensors_handles.data(), (int)row_partition_tensors.size(), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
     TFE_OpSetAttrType(op, "Tindex", Tindex);
     TFE_OpSetAttrType(op, "Tshape", Tshape);
-    TFE_OpSetAttrInt(op, "num_row_partition_tensors", row_partition_tensors.size());
+    TFE_OpSetAttrInt(op, "num_row_partition_tensors", (int)row_partition_tensors.size());
     
     std::vector<std::size_t> row_partition_types_sizes; row_partition_types_sizes.reserve((int)row_partition_types.size());
     std::transform(row_partition_types.begin(), row_partition_types.end(), std::back_inserter(row_partition_types_sizes), [](const auto& s) { return s.size();});
@@ -19655,14 +19655,14 @@ tensor shape_n(const std::vector<tensor>&input, datatype out_type=static_cast<da
 
     // Required input arguments
     
-    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve(input.size());
+    std::vector<TFE_TensorHandle*> input_handles; input_handles.reserve((int)input.size());
     std::transform(input.begin(), input.end(), std::back_inserter(input_handles), [](const auto& t) { return t.tfe_handle.get();});
     TFE_OpAddInputList(op, input_handles.data(), (int)input.size(), context::get_status());
     status_check(context::get_status());
     
 
     // Attributes
-    TFE_OpSetAttrInt(op, "N", input.size());
+    TFE_OpSetAttrInt(op, "N", (int)input.size());
     TFE_OpSetAttrType(op, "out_type", out_type);
 
     // Execute Op
