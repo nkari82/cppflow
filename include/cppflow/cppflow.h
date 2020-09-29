@@ -28,9 +28,7 @@ namespace cppflow {
  ******************************/
 
 namespace cppflow {
-    std::string version() {
-        return "TensorFlow: " + std::string(TF_Version()) + " CppFlow: 2.0.0";
-    }
+    std::string version() { return "TensorFlow: " + std::string(TF_Version()) + " CppFlow: 2.0.0";}
 }
 
 #endif //EXAMPLE_CPPFLOW_H

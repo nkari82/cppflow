@@ -19,10 +19,50 @@ namespace cppflow {
 
 	class model {
 	public:
-		friend class operations;
+		class operation
+		{
+		public:
+			operation(TF_Graph* graph, TF_Operation* op);
+			const std::string& name();
+			const int32_t dimention();
+
+		private:
+			std::string name_;
+			int32_t n_dims_;
+			TF_Operation* op_;
+		};
+
+		class operations
+		{
+		public:
+			class iterator
+			{
+			public:
+				iterator() = default;
+				iterator(TF_Graph* graph, size_t pos);
+				iterator operator++();
+				operation operator*();
+				bool operator!=(const iterator& iter);
+				bool operator==(const iterator& iter);
+
+			private:
+				TF_Graph* graph_;
+				size_t pos_;
+				TF_Operation* op_;
+			};
+
+			operations(model* _model);
+
+			iterator begin();
+			iterator end();
+
+		private:
+			TF_Graph* graph_;
+		};
+
 		explicit model(const std::string& filename
 			, const std::vector<std::string>& inputs = { "serving_default_input_1" }
-		, const std::vector<std::string>& outputs = { "StatefulPartitionedCall" });
+			, const std::vector<std::string>& outputs = { "StatefulPartitionedCall" });
 
 		tensor operator()(const tensor& input);
 		void operator()(const std::vector<tensor>& inputs, std::vector<tensor>& outputs);
@@ -32,45 +72,6 @@ namespace cppflow {
 		TF_Session* session;
 		std::vector<TF_Output> inputs;
 		std::vector<TF_Output> outputs;
-	};
-
-	class operation
-	{
-	public:
-		operation(TF_Operation* oper);
-		const std::string& name();
-
-	private:
-		std::string name_;
-		TF_Operation* oper_;
-	};
-
-	class operations
-	{
-	public:
-		class iterator
-		{
-		public:
-			iterator() = default;
-			iterator(TF_Graph* _graph, size_t _pos);
-			iterator operator++();
-			operation operator*();
-			bool operator!=(const iterator& iter);
-			bool operator==(const iterator& iter);
-
-		private:
-			TF_Graph* graph;
-			size_t pos;
-			TF_Operation* oper;
-		};
-
-		operations(model* _model);
-
-		iterator begin();
-		iterator end();
-
-	private:
-		TF_Graph* graph_;
 	};
 }
 
@@ -88,7 +89,7 @@ namespace cppflow {
 		this->session = TF_LoadSessionFromSavedModel(session_options, run_options, filename.c_str(), &tag, tag_len, graph, meta_graph, context::get_status());
 		TF_DeleteSessionOptions(session_options);
 		TF_DeleteBuffer(run_options);
-		//TF_DeleteBuffer(meta_graph);
+		TF_DeleteBuffer(meta_graph);
 
 		status_check(context::get_status());
 
@@ -96,14 +97,14 @@ namespace cppflow {
 		{
 			TF_Operation* oper = TF_GraphOperationByName(this->graph, inputs[i].c_str());
 			if (oper == nullptr) throw std::runtime_error{ "invalid operator!" };
-			this->inputs.emplace_back(TF_Output{ oper, (int)i });
+			this->inputs.emplace(this->inputs.end(), TF_Output{ oper, 0 });
 		}
 
 		for (size_t i = 0; i < outputs.size(); ++i)
 		{
 			TF_Operation* oper = TF_GraphOperationByName(this->graph, outputs[i].c_str());
 			if (oper == nullptr) throw std::runtime_error{ "invalid operator!" };
-			this->outputs.emplace_back(TF_Output{ oper, (int)i });
+			this->outputs.emplace(this->outputs.end(), TF_Output{ oper, 0 });
 		}
 	}
 
@@ -118,10 +119,10 @@ namespace cppflow {
 		TF_Tensor* outvals[1] = { nullptr };
 
 		TF_SessionRun(this->session
-			, NULL
+			, nullptr
 			, this->inputs.data(), inpvals, (int)this->inputs.size()
 			, this->outputs.data(), outvals, (int)this->outputs.size()
-			, NULL, 0, NULL, context::get_status());
+			, nullptr, 0, nullptr, context::get_status());
 
 		status_check(context::get_status());
 
@@ -157,60 +158,69 @@ namespace cppflow {
 		}
 		catch (const std::exception& ex)
 		{
+			std::cerr << ex.what() << std::endl;
 			throw ex;
 		}
 	}
 
-	operation::operation(TF_Operation* oper) : oper_(oper)
+	model::operation::operation(TF_Graph* graph, TF_Operation* op) : op_(op), n_dims_(0)
 	{
-		name_ = TF_OperationName(oper_);
+		name_ = TF_OperationName(op_);
+		if (std::strcmp("NoOp", name_.c_str()) == 0)
+			return;
+
+		n_dims_ = TF_GraphGetTensorNumDims(graph, { op_, 0 }, context::get_status());
 	}
 
-	const std::string& operation::name()
+	const std::string& model::operation::name()
 	{
 		return name_;
 	}
 
-	operations::iterator::iterator(TF_Graph* _graph, size_t _pos)
-		: graph(_graph)
-		, pos(_pos)
-		, oper(nullptr)
+	const int32_t model::operation::dimention()
 	{
-		if (pos != std::numeric_limits<size_t>::max())
-			oper = TF_GraphNextOperation(graph, &pos);
+		return n_dims_;
 	}
 
-	operations::iterator operations::iterator::operator++()
+	model::operations::iterator::iterator(TF_Graph* graph, size_t pos)
+		: graph_(graph)
+		, pos_(pos)
+		, op_(nullptr)
 	{
-		oper = TF_GraphNextOperation(graph, &pos);
-		if (!oper) pos = std::numeric_limits<size_t>::max();
+		if (pos != std::numeric_limits<size_t>::max())
+			op_ = TF_GraphNextOperation(graph, &pos_);
+	}
+
+	model::operations::iterator model::operations::iterator::operator++()
+	{
+		op_ = TF_GraphNextOperation(graph_, &pos_);
 		return *this;
 	}
 
-	operation operations::iterator::operator*()
+	model::operation model::operations::iterator::operator*()
 	{
-		return operation(oper);
+		return operation(graph_, op_);
 	}
 
-	bool operations::iterator::operator!=(const iterator& iter)
+	bool model::operations::iterator::operator!=(const iterator& iter)
 	{
-		return bool(pos != iter.pos);
+		return bool(op_ != iter.op_);
 	}
 
-	bool operations::iterator::operator==(const iterator& iter)
+	bool model::operations::iterator::operator==(const iterator& iter)
 	{
-		return bool(pos == iter.pos);
+		return bool(op_ == iter.op_);
 	}
 
-	operations::operations(model* _model) : graph_(_model->graph)
+	model::operations::operations(model* _model) : graph_(_model->graph)
 	{}
 
-	operations::iterator operations::begin()
+	model::operations::iterator model::operations::begin()
 	{
 		return operations::iterator(graph_, (size_t)0);
 	}
 
-	operations::iterator operations::end()
+	model::operations::iterator model::operations::end()
 	{
 		return operations::iterator(graph_, std::numeric_limits<size_t>::max());
 	}
