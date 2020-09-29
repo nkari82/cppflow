@@ -52,6 +52,14 @@ namespace cppflow {
         tensor(const T& value);
 
         /**
+		* Creates a flat tensor with the given values
+		* @tparam T A type that can be convertible into a tensor
+		* @param values The values to be converted
+		*/
+		template<typename T>
+        tensor(const std::vector<T>& values);
+
+        /**
          * @return Shape of the tensor
          */
         tensor shape() const;
@@ -107,7 +115,7 @@ namespace cppflow {
 
     tensor::tensor(enum TF_DataType type, const void *data, size_t len, const std::vector<int64_t> &shape) {
         this->tf_tensor = {TF_AllocateTensor(type, shape.data(), (int)shape.size(), (int)len), TF_DeleteTensor};
-        memcpy(TF_TensorData(this->tf_tensor.get()), data, TF_TensorByteSize(this->tf_tensor.get()));
+        std::memcpy(TF_TensorData(this->tf_tensor.get()), data, TF_TensorByteSize(this->tf_tensor.get()));
         this->tfe_handle = {TFE_NewTensorHandle(this->tf_tensor.get(), context::get_status()), TFE_DeleteTensorHandle};
         status_check(context::get_status());
     }
@@ -118,11 +126,15 @@ namespace cppflow {
 
     template<typename T>
     tensor::tensor(const std::initializer_list<T>& values) :
-            tensor(std::vector<T>(values), {(int64_t) values.size()}) {}
+        tensor(std::vector<T>(values), {(int64_t)values.size()}) {}
 
     template<typename T>
     tensor::tensor(const T& value) :
-            tensor(std::vector<T>({value}), {}) {}
+        tensor(std::vector<T>({value}), {}) {}
+
+	template<typename T>
+	tensor::tensor(const std::vector<T>& values) :
+		tensor(values, {(int64_t)values.size()}) {}
 
     // For future version TensorFlow 2.4
     //template<>
@@ -137,13 +149,12 @@ namespace cppflow {
     template<>
     tensor::tensor(const std::string& value) {
         size_t size = 8 + TF_StringEncodedSize(value.length());
-        char* data = new char[value.size() + 8];
-        for (int i=0; i<8; i++) {data[i]=0;}
-        TF_StringEncode(value.c_str(), value.size(), data + 8, size - 8, context::get_status());
+        std::vector<char> buffer(value.size() + 8);
+        for (int i=0; i<8; i++) { buffer[i]=0;}
+        TF_StringEncode(value.c_str(), value.size(), buffer.data() + 8, size - 8, context::get_status());
         status_check(context::get_status());
 
-        *this = tensor(static_cast<enum TF_DataType>(TF_STRING), (void *) data, size, {});
-        delete [] data;
+        *this = tensor(static_cast<enum TF_DataType>(TF_STRING), (void *)buffer.data(), size, {});
     }
 
     tensor::tensor(TFE_TensorHandle* handle) {
