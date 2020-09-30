@@ -52,6 +52,14 @@ namespace cppflow {
         tensor(const T& value);
 
         /**
+		 * Creates a tensor with the given value
+		 * @tparam T A type that can be convertible into a tensor
+		 * @param value The value to be converted
+		 */
+		template<typename T>
+        tensor(const T& value, const std::vector<int64_t>& shape);
+
+        /**
 		* Creates a flat tensor with the given values
 		* @tparam T A type that can be convertible into a tensor
 		* @param values The values to be converted
@@ -77,14 +85,23 @@ namespace cppflow {
          */
         datatype dtype() const;
 
+        /*
+        *  @return tensor size
+        */
+        size_t size() const;
+
         /**
          * Converts the tensor into a C++ vector
          * @tparam T The c++ type (must be equivalent to the tensor type)
          * @return A vector representing the flat tensor
          */
         template<typename T>
-        std::vector<T> get_data() const;
+        std::vector<T> data() const;
 
+        /*
+        *  raw data
+        */
+        void* data() const;
 
         ~tensor() = default;
         tensor(const tensor &tensor) = default;
@@ -130,7 +147,11 @@ namespace cppflow {
 
     template<typename T>
     tensor::tensor(const T& value) :
-        tensor(std::vector<T>({value}), {}) {}
+        tensor(std::vector<T>({value}), {1}) {}
+
+	template<typename T>
+	tensor::tensor(const T& value, const std::vector<int64_t>& shape) :
+		tensor(std::vector<T>({value}), shape) {}
 
 	template<typename T>
 	tensor::tensor(const std::vector<T>& values) :
@@ -202,7 +223,7 @@ namespace cppflow {
     }
 
     template<typename T>
-    std::vector<T> tensor::get_data() const {
+    std::vector<T> tensor::data() const {
         auto res_tensor = TFE_TensorHandleResolve(this->tfe_handle.get(), context::get_status());
         status_check(context::get_status());
 
@@ -217,9 +238,24 @@ namespace cppflow {
         return std::vector<T>(T_data, T_data + size);
     }
 
+    void* tensor::data() const
+    {
+		auto res_tensor = TFE_TensorHandleResolve(this->tfe_handle.get(), context::get_status());
+		status_check(context::get_status());
+
+		// Check tensor data is not empty
+		return TF_TensorData(res_tensor);
+    }
     datatype tensor::dtype() const {
         return TFE_TensorHandleDataType(this->tfe_handle.get());
     }
+
+	size_t tensor::size() const
+	{
+		auto res_tensor = TFE_TensorHandleResolve(this->tfe_handle.get(), context::get_status());
+		status_check(context::get_status());
+        return TF_TensorByteSize(res_tensor);
+	}
 }
 
 #endif //CPPFLOW2_TENSOR_H
