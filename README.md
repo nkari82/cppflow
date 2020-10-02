@@ -40,3 +40,7 @@ As this is still a work under development, there are still many things to do... 
   - Model eager API: Calling model with the eager API instead of the TF_SessionRun API. I have tried using TF_GraphToFunction but I could not achieve it.
   - Cover more raw_ops: Currently, the generator that creates the raw_ops facade converts many of the raw_ops but not all of them. Improve the generator to cover these cases (which are marked in the generator code).
   - Include testing
+
+Dependancy
+TensorflowLite c binary [Download](https://github.com/ValYouW/tflite-dist/releases)
+TensorflowLIte c compile [Link](https://www.youtube.com/watch?v=dox1ZkFP-f4&feature=youtu.be)

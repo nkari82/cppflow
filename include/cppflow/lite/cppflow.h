@@ -1,5 +1,7 @@
 #pragma once
 #include <tensorflow/lite/c/c_api.h>
+#include "datatype.h"
+#include "tensor.h"
 #include "model.h"
 
 namespace cppflow 
